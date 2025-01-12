@@ -24,6 +24,8 @@ https://github.com/TsuyoshiUsugi/UnityGASRankingSystem.git
 
 2. **Open Apps Script**
    - Open the spreadsheet, and from the menu, select "Extensions" → "Apps Script."
+   ![21d67be3fcf5586a43159def9ef95c4b](https://github.com/user-attachments/assets/79653538-0b07-42ef-8eb3-2edb44cf2416)
+
    - This will open the Apps Script editor where you can write your code.
 
 3. **Paste the Code in Apps Script**
@@ -66,7 +68,7 @@ This completes the spreadsheet setup.
 
 ### Features
 
-#### Sending Scores
+### Sending Scores
 
 You can send a player's name and score using the following code:
 
@@ -78,7 +80,7 @@ GASRankingManager.Instance.SendScore(_nameInputField.text, score);
   - `name`: Player name (`string` type)
   - `score`: Score (`float` type)
 
-#### Retrieving the Score List
+### Retrieving the Score List
 
 You can retrieve and display the score list with the following code:
 
@@ -105,10 +107,11 @@ GASRankingManager.Instance.GetScoreList(GASRankingManager.GetScoreOrder.Descendi
   - Success callback (`Action<List<PlayerData>>`)
   - Failure callback (`Action`)
 
-#### Deleting the Ranking (Editor Only)
+### Deleting the Ranking (Editor Only)
 
 - **Steps**
   - Click the delete button displayed in the Inspector of `GASManager.prefab`.
+![716729c061d3514532850f9cc08fd3cd](https://github.com/user-attachments/assets/8d12c0bd-cb9d-4cd3-8c5f-d26ef9e6fd21)
 
 ---
 
