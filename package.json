@@ -3,5 +3,5 @@
     "version": "1.0.0",
     "displayName": "GASRankingSystem",
     "description": "This is a ranking system using GoogleAppsScript, intended for use with Unity.",
-    "unity": "2022.3.49f1"
+    "unity": "2022.3.49"
 }
