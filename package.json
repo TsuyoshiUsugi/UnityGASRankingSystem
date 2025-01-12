@@ -10,5 +10,8 @@
             "description": "This is a sample scene that includes examples of sending scores and receiving rankings.",
             "path": "Samples~/GASSampleScene"
         }
-    ]
+    ],
+    "author": {
+        "name": "Tsuyoshi Usugi"
+    }
 }
