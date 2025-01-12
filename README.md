@@ -1,0 +1,1 @@
+This is a ranking system using GoogleAppsScript, intended for use with Unity.
