@@ -1,5 +1,7 @@
 # UnityGASランキングシステム  
 これは、GoogleAppsScriptを使用したUnity向けランキングシステムです。  
+ランキングの登録、取得やエディター上での削除機能があります。またNGワードを判定し、名前を伏字にする機能もあります。  
+※NGワードのリストは各自で用意してください。  
 [English README is here.](README.md)
 
 ## セットアップ
