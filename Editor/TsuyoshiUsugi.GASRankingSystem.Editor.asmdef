@@ -1,0 +1,16 @@
+{
+    "name": "TsuyoshiUsugi.GASRankingSystem.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:916f3880cbba9d1479402b819b48ba02"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

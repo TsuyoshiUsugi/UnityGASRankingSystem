@@ -308,7 +308,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u66F4\u65B0"
+  m_Text: Show Ranking
 --- !u!222 &304143687
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u30B9\u30B3\u30A2"
+  m_Text: Score
 --- !u!222 &522546397
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -769,7 +769,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u540D\u524D"
+  m_Text: Name
 --- !u!222 &734567827
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1493,7 +1493,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u9001\u4FE1"
+  m_Text: Send
 --- !u!222 &1654111397
 CanvasRenderer:
   m_ObjectHideFlags: 0
