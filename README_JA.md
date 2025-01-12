@@ -1,5 +1,6 @@
 # UnityGASランキングシステム  
-これは、GoogleAppsScriptを使用したUnity向けランキングシステムです。
+これは、GoogleAppsScriptを使用したUnity向けランキングシステムです。  
+[English README is here.](README.md)
 
 ## セットアップ
 
