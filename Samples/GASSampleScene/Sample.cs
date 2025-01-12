@@ -15,23 +15,21 @@ namespace GASRankingSystem.Unity.Sample
 
         private void Start()
         {
-            //ボタンが押された時の処理を登録
             _dataButton.onClick.AddListener(() =>
             {
                 if (string.IsNullOrEmpty(_nameInputField.text) || string.IsNullOrEmpty(_scoreField.text))
                 {
-                    Debug.LogError("名前とスコアを入力してください");
+                    Debug.LogError("Enter name and score");
                     return;
                 }
 
                 if (!float.TryParse(_scoreField.text, out var score))
                 {
-                    Debug.LogError("スコアは数値で入力してください");
+                    Debug.LogError("Enter a number in score");
                     return;
                 }
 
-                GASRankingManager.Instance.SendScore(_nameInputField.text, score, Debug.Log,
-                    () => { Debug.LogError("Fail"); });
+                GASRankingManager.Instance.SendScore(_nameInputField.text, score);
             });
 
             _getButton.onClick.AddListener(() =>

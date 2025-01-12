@@ -1,51 +1,19 @@
-function doPost(e) {
-  try {
-    var params = JSON.parse(e.postData.contents); // Unity 側で送信した JSON データを取得
-    var ss = SpreadsheetApp.openById("スプレッドシートのID");
-    var sheet = ss.getSheetByName('シート1');
-    var ngSheet = ss.getSheetByName('NGワード'); // NGワードシートを取得
-
-    // NGワードシートからNGワードリストを取得
-    var ngWords = ngSheet.getRange(1, 1, ngSheet.getLastRow(), 1).getValues(); // 1列目のNGワードをリストで取得
-    var ngWordsSet = new Set(ngWords.flat()); // Setに変換して検索を高速化
-
-    // 名前がNGワードリストに含まれているかをチェック
-    var name = params.Name;
-    if (ngWordsSet.has(name)) {
-      name = "*****"; // 名前をNGワードに変更
-    }
-
-    // スプレッドシートの次の空行を取得
-    var row = sheet.getLastRow() + 1;
-
-    // 名前を変更した場合でも書き込み処理
-    sheet.getRange(row, 1).setValue(name); // 名前を列1に書き込む
-    sheet.getRange(row, 2).setValue(params.Score); // スコアを列2に書き込む
-
-    var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2); // ヘッダー行を除いたデータ範囲を取得
-    range.sort({ column: 2, ascending: false });
-
-    var output = ContentService.createTextOutput();
-    output.setMimeType(ContentService.MimeType.JSON);
-    output.setContent(JSON.stringify({ message: "Success", status: 200 }));
-    return output;
-
-  } catch (error) {
-    var output = ContentService.createTextOutput();
-    output.setMimeType(ContentService.MimeType.JSON);
-    output.setContent(JSON.stringify({ message: "Error", details: error.message, status: 500 }));
-    return output;
+const CONFIG = {
+  SPREADSHEET_ID: "your_spreadsheet_id",
+  SHEETS: {
+    MAIN: "Main",
+    NG_WORDS: "BadWords"
   }
-}
+};
 
 function doGet(e) {
   try {
-    var ss = SpreadsheetApp.openById("スプレッドシートのID");
-    var sheet = ss.getSheetByName('シート1');
+    var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(CONFIG.SHEETS.MAIN);
     var data = sheet.getDataRange().getValues();
 
     var playerDataArray = [];
-    for (var i = 1; i < data.length; i++) { // ヘッダー行をスキップ
+    for (var i = 1; i < data.length; i++) {
       var playerData = {
         Name: data[i][0],
         Score: data[i][1]
@@ -63,4 +31,58 @@ function doGet(e) {
     var errorResponse = { message: "Error", details: error.message };
     return ContentService.createTextOutput(JSON.stringify(errorResponse)).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function doPost(e) {
+  try {
+    var params = JSON.parse(e.postData.contents);
+    var action = params.Action;
+    var data = params.Data;
+
+    if (action === "addRanking") {
+      var rankingData = JSON.parse(data); 
+      return addRanking(rankingData);
+    } else if (action === "deleteRanking") {
+      return deleteRanking();
+    } else {
+      throw new Error("Invalid action");
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ message: "Error", details: error.message, status: 500 })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function addRanking(data) {
+  var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(CONFIG.SHEETS.MAIN);
+  var ngSheet = ss.getSheetByName(CONFIG.SHEETS.NG_WORDS); 
+
+  var ngWords = ngSheet.getRange(1, 1, ngSheet.getLastRow(), 1).getValues();
+  var ngWordsSet = new Set(ngWords.flat()); 
+  if (ngWordsSet.has(data.Name)) {
+    data.Name = "*****"; 
+  }
+
+  var row = sheet.getLastRow() + 1;
+  sheet.getRange(row, 1).setValue(data.Name);
+  sheet.getRange(row, 2).setValue(data.Score);
+
+  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
+  range.sort({ column: 2, ascending: false });
+
+  return ContentService.createTextOutput(
+    JSON.stringify({ message: "Score added and sorted", status: 200 })
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function deleteRanking() {
+  var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(CONFIG.SHEETS.MAIN);
+  sheet.getRange(2, 1, sheet.getLastRow() - 1, 2).clearContent();
+
+  return ContentService.createTextOutput(
+    JSON.stringify({ message: "Ranking data cleared", status: 200 })
+  ).setMimeType(ContentService.MimeType.JSON);
 }

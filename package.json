@@ -4,13 +4,6 @@
     "displayName": "GASRankingSystem",
     "description": "This is a ranking system using GoogleAppsScript, intended for use with Unity.",
     "unity": "2022.3",
-    "samples": [
-        {
-            "displayName": "SampleScene",
-            "description": "This is a sample scene that includes examples of sending scores and receiving rankings.",
-            "path": "Samples~/GASSampleScene"
-        }
-    ],
     "author": {
         "name": "Tsuyoshi Usugi"
     }

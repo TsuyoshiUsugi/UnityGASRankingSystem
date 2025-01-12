@@ -8,12 +8,12 @@ using UnityEngine.Networking;
 namespace GASRankingSystem.Unity
 {
     /// <summary>
-    /// GASを用いたランキングシステムを管理するシングルトンクラス
-    /// 取得はGetScoreListを呼び出し、送信はSendScoreを呼び出す
+    /// Singleton class to manage ranking system using GAS
+    /// Call GetScoreList to retrieve rankings and SendScore to send scores
     /// </summary>
     public class GASRankingManager : MonoBehaviour
     {
-        [SerializeField] private string _deployId;
+        [SerializeField] private string _deployURL;
         [SerializeField] private int _maxUserInputNameCount = 10;
         private static GASRankingManager _instance;
         public static GASRankingManager Instance => _instance;
@@ -23,7 +23,6 @@ namespace GASRankingSystem.Unity
             if (_instance == null)
             {
                 _instance = this;
-                DontDestroyOnLoad(gameObject); // 必要に応じて
             }
             else
             {
@@ -32,27 +31,29 @@ namespace GASRankingSystem.Unity
         }
 
         /// <summary>
-        /// スコアを送信する
+        /// Submit Score
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="score"></param>
         /// <param name="success"></param>
         /// <param name="fail"></param>
-        public void SendScore(string userName, float score, Action<string> success, Action fail)
+        public void SendScore(string userName, float score)
         {
-            if (userName.Length > _maxUserInputNameCount)
+            var rankingData = new PlayerData() { Name = userName, Score = score };
+            var serializedData = JsonUtility.ToJson(rankingData);
+            var requestPayload = new GASRequest
             {
-                Debug.LogError("ユーザー名は" + _maxUserInputNameCount + "文字以下で入力してください");
-                fail.Invoke();
-                return;
-            }
-            StartCoroutine(PostRequest(CreateData(userName, score), success, fail));
+                Action = "addRanking",
+                Data = serializedData
+            };
+            var jsonRequest = JsonUtility.ToJson(requestPayload);
+            StartCoroutine(SendRequest(jsonRequest));
         }
         
         /// <summary>
-        /// スコアを取得する
+        /// Retrieve ranking information
         /// </summary>
-        /// <param name="order">降順か昇順か</param>
+        /// <param name="order"></param>
         /// <param name="onSuccess"></param>
         /// <param name="onFailure"></param>
         public void GetScoreList(GetScoreOrder order, Action<List<PlayerData>> onSuccess, Action onFailure)
@@ -60,33 +61,54 @@ namespace GASRankingSystem.Unity
             StartCoroutine(GetScoreListCoroutine(order, onSuccess, onFailure));
         }
 
-        #region internal
-        private string CreateData(string userName, float score)
+#if UNITY_EDITOR
+        /// <summary>
+        /// Delete all ranking data
+        /// </summary>
+        [ContextMenu("Clear Ranking Data")]
+        public void ClearRankingData()
         {
-            var playerData = new PlayerData
-            {
-                Name = userName,
-                Score = score
-            };
-            return JsonUtility.ToJson(playerData);
+            StartCoroutine(SendDeleteRequest());
         }
-        
-        private IEnumerator PostRequest(string json, Action<string> success, Action fail)
+#endif
+
+        #region internal
+        private IEnumerator SendDeleteRequest()
         {
-            var url = $"https://script.google.com/macros/s/{_deployId}/exec";
-            var request = new UnityWebRequest(url, "POST");
-            var postData = Encoding.UTF8.GetBytes(json);
-            request.uploadHandler = new UploadHandlerRaw(postData);
+            var jsonData = JsonUtility.ToJson(new GASRequest { Action = "deleteRanking" });
+            var request = new UnityWebRequest(_deployURL, "POST");
+            var bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.Success)
             {
-                success.Invoke(request.downloadHandler.text);
+                Debug.Log("Response: " + request.downloadHandler.text);
             }
             else
             {
-                fail.Invoke();
+                Debug.LogError("Error: " + request.error);
+            }
+        }
+        
+        private IEnumerator SendRequest(string jsonRequest)
+        {
+            var request = new UnityWebRequest(_deployURL, "POST");
+            var bodyRaw = Encoding.UTF8.GetBytes(jsonRequest);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Response: " + request.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError($"Error: {request.error}, Response: {request.downloadHandler.text}");
             }
         }
 
@@ -111,12 +133,10 @@ namespace GASRankingSystem.Unity
             if (isSuccess && !string.IsNullOrEmpty(jsonResponse))
             {
                 var playerDataList = ParseJsonToPlayerDataList(jsonResponse);
-
                 if (order == GetScoreOrder.Ascending)
                 {
                     playerDataList.Sort((x, y) => x.Score.CompareTo(y.Score));
                 }
-
                 onSuccess?.Invoke(playerDataList);
             }
             else
@@ -127,8 +147,7 @@ namespace GASRankingSystem.Unity
 
         private IEnumerator GetScoreListFromGAS(Action<string> success, Action fail)
         {
-            var url = $"https://script.google.com/macros/s/{_deployId}/exec";
-            var request = UnityWebRequest.Get(url);
+            var request = UnityWebRequest.Get(_deployURL);
             yield return request.SendWebRequest();
             
             if (request.result == UnityWebRequest.Result.Success)
@@ -167,5 +186,12 @@ namespace GASRankingSystem.Unity
     public class PlayerDataArrayWrapper
     {
         public PlayerData[] PlayerDataArray;
+    }
+    
+    [Serializable]
+    public class GASRequest
+    {
+        public string Action; 
+        public string Data;   
     }
 }
