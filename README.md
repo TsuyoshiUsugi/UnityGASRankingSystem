@@ -1,5 +1,7 @@
 # UnityGASRankingSystem  
 This is a ranking system using GoogleAppsScript, intended for use with Unity.  
+There are functions to register and retrieve rankings and delete them on the editor. There is also a function to determine the NG words and to suppress the names of those words.  
+Please prepare your own list of NG words.  
 [日本語版READMEはこちら](README_JA.md)
 ## Setup
 
