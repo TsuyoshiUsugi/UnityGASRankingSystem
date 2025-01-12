@@ -61,7 +61,7 @@ namespace GASRankingSystem.Unity
             StartCoroutine(GetScoreListCoroutine(order, onSuccess, onFailure));
         }
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         /// <summary>
         /// Delete all ranking data
         /// </summary>
@@ -70,9 +70,7 @@ namespace GASRankingSystem.Unity
         {
             StartCoroutine(SendDeleteRequest());
         }
-#endif
 
-        #region internal
         private IEnumerator SendDeleteRequest()
         {
             var jsonData = JsonUtility.ToJson(new GASRequest { Action = "deleteRanking" });
@@ -91,6 +89,8 @@ namespace GASRankingSystem.Unity
                 Debug.LogError("Error: " + request.error);
             }
         }
+        #endif
+        #region internal
         
         private IEnumerator SendRequest(string jsonRequest)
         {
