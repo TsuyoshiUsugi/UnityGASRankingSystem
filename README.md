@@ -1,5 +1,6 @@
 # UnityGASRankingSystem  
 This is a ranking system using GoogleAppsScript, intended for use with Unity.  
+[日本語版READMEはこちら](README_JA.md)
 ## Setup
 
 ### Requirements
