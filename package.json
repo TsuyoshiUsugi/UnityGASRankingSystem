@@ -3,5 +3,12 @@
     "version": "1.0.0",
     "displayName": "GASRankingSystem",
     "description": "This is a ranking system using GoogleAppsScript, intended for use with Unity.",
-    "unity": "2022.3"
+    "unity": "2022.3.49f1",
+    "samples": [
+        {
+            "displayName": "SampleScene",
+            "description": "This is a sample scene that includes examples of sending scores and receiving rankings.",
+            "path": "Samples~/SampleScene.unity"
+        }
+    ]
 }
